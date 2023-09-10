@@ -10,7 +10,7 @@ default: image
 
 .PHONY: release
 release: DOCKER_NO_CACHE:=--no-cache
-release: check-dirty image tag-latest push push-latest
+release: check-dirty image tag-latest push push-latest tag-git push-git
 
 .PHONY: image
 image:
@@ -18,8 +18,7 @@ image:
         --build-arg VERSION="$(VERSION)" \
         --build-arg BUILD_DATE="$(BUILD_DATE)" \
         --build-arg GIT_COMMIT="$(GIT_COMMIT)" \
-        --build-arg GIT_COMMIT_ID="$(GIT_COMMIT_ID)" \
-        --build-arg COMPILE="$(COMPILE)"
+        --build-arg GIT_COMMIT_ID="$(GIT_COMMIT_ID)"
 
 check-dirty: DIFF_STATUS := $(shell git diff --stat)
 check-dirty:
@@ -40,3 +39,13 @@ tag-latest:
 .PHONY: push-latest
 push-latest:
 	docker push $(REPOSITORY)/$(IMAGE_NAME):latest
+
+.PHONY: tag-git
+tag-git:
+	git pull --tags
+	git tag $(VERSION)
+
+.PHONY: push-git
+push-git:
+	git push --tags
+	git push
