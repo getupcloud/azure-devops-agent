@@ -1,10 +1,10 @@
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/docker?view=azure-devops
 
 FROM ubuntu:20.04
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
-
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y -qq --no-install-recommends \
     apt-transport-https \
     apt-utils \
     ca-certificates \
@@ -14,7 +14,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommend
     jq \
     lsb-release \
     software-properties-common \
-    libicu66
+    libicu66 && \
+    apt clean all && \
+    rm -rf /var/cache/apt/
+
+RUN curl -sLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
+    rm -f kubectl
 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
