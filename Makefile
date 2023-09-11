@@ -1,4 +1,4 @@
-VERSION := v0.2.0
+VERSION := v0.3.0
 REPOSITORY := getupcloud
 IMAGE_NAME := azure-devops-agent
 GIT_COMMIT := $(shell git log -n1 --oneline)
